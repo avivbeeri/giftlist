@@ -3,7 +3,15 @@ var fs = require("fs");
 var router = require('restroute');
 var port = process.env.PORT | 8080;
 var redis = require("redis");
-var client = redis.createClient();
+var client;
+
+if (process.env.REDISCLOUD_URL) {
+    var redisURL = url.parse(process.env.REDISCLOUD_URL);
+    client = redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
+    client.auth(redisURL.auth.split(":")[1]);
+} else {
+    client = redis.createClient();
+}
 
 client.on("error", function (err) {
     console.log("Error " + err);
