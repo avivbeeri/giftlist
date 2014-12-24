@@ -1,0 +1,11 @@
+{
+  "name": "giftlist",
+  "version": "1.0.0",
+  "description": "A useful gift list for a friend's wedding",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aviv Beeri",
+  "license": "BSD"
+}

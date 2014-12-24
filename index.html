@@ -1,0 +1,36 @@
+<html>
+    
+<head>
+    <title>Ellie and Tim's Wedding Gift List</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" ></script>
+</head>
+
+<body>
+    <h1>Hello world!</h1>
+    <table id="gifts">
+        <tr>
+            <td>Gift Name</td>
+            <td>Notes</td>
+            <td>Link</td>
+            <td>Quantity Wanted</td>
+            <td>Taken</td>
+        </tr>
+    </table>
+    <script>
+        $(document).ready(function() {
+            $.get("/api/gifts", function (data) {
+                var gifts = JSON.parse(data);
+                console.log(data);
+                gifts.forEach(function(gift) {
+                    $("#gifts").append(
+                        $("<tr>").append(
+                            $("<td>").append(gift.name)
+                        )
+                    );
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
