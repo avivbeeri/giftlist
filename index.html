@@ -1,31 +1,55 @@
+<!DOCTYPE html>
 <html>
     
 <head>
     <title>Ellie and Tim's Wedding Gift List</title>
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="index.css" />
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" ></script>
 </head>
 
 <body>
-    <h1>Hello world!</h1>
+    <h1>Ellie and Tim's Wedding Gift List</h1>
+    <p>
+        Please click "take one" for every gift you've bought for the lovely couple.
+    </p>
     <table id="gifts">
         <tr>
+            <td>Image</td>
             <td>Gift Name</td>
             <td>Notes</td>
-            <td>Link</td>
             <td>Quantity Wanted</td>
+            <td>Link</td>
             <td>Taken</td>
         </tr>
     </table>
     <script>
         $(document).ready(function() {
             $.get("/api/gifts", function (data) {
-                var gifts = JSON.parse(data);
-                console.log(data);
+                //var gifts = JSON.parse(data);
+                var gifts = data;
                 gifts.forEach(function(gift) {
+                    var id = gift.id;
+                    gift.image = gift.image || "";
+                    console.log(gift.image);
                     $("#gifts").append(
                         $("<tr>").append(
-                            $("<td>").append(gift.name)
+                            $("<td>").append(
+                                $("<img>").attr("src", gift.image)
+                            ),
+                            $("<td>").append(gift.name),
+                            $("<td>").append(gift.description),
+                            $("<td>").append(gift.quantity),
+                            $("<td>").append(
+                                $("<a>").attr("href",gift.link)
+                                        .append("Link")
+                            ),
+                            $("<td>").append(
+                                $("<a>").attr("href", "").click(function () {
+                                    $.get("/api/gifts/" + id + "/delete", function () {
+                                        location.reload(true);
+                                    });
+                                }).append("take one")
+                            )
                         )
                     );
                 });

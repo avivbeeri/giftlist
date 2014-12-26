@@ -9,6 +9,7 @@
   "author": "Aviv Beeri",
   "license": "BSD",
   "dependencies": {
+    "mime": "^1.2.11",
     "redis": "^0.12.1",
     "restroute": "0.0.2"
   }
