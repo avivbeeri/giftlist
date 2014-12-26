@@ -1,0 +1,45 @@
+<html>
+    
+<head>
+    <title>Ellie and Tim's Wedding Gift List</title>
+    <link rel="stylesheet" type="text/css" href="index.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" ></script>
+</head>
+
+<body>
+    <h1>Add a Gift!</h1>
+    <form id="giftForm" name="giftForm">
+        Name: <input type="text" name="name" >
+        <br />
+        Description: <input type="text" name="description" >
+        <br />
+        Link: <input type="text" name="link" >
+        <br />
+        Image URL: <input type="text" name="image" >
+        <br />
+        Quantity: <input type="number" name="quantity" id="quantity"
+                        min="1" step="1" value="1" >
+        <input type="button" value="Submit" id="btnSubmit">
+    </form>
+    <script>
+        $(document).ready(function() {
+            $("#btnSubmit").click(function (e) {
+                var postData = $("#giftForm").serializeArray();
+                $.ajax({
+                    url: "/api/gifts/new",
+                    type: "POST",
+                    data: postData,
+                    success: function () {
+                        window.location.replace("index.html");
+                    },
+                    error: function () {
+
+                    }
+                });
+
+            });
+        });
+    </script>
+</body>
+
+</html>
