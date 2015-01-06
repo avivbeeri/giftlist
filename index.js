@@ -65,6 +65,21 @@ router.get("/api/gifts", function (req,res) {
     });
 });
 
+router.get("/api/purchased", function (req,res) {
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    client.keys("purchased:*", function (err, replies) {
+        var query = client.multi();
+        replies.forEach(function (giftName) {
+            query.hgetall(giftName);
+        });
+        query.exec(function (err, gifts) {
+            res.write(JSON.stringify(gifts));
+            res.end();
+        });
+        
+    });
+});
+
 
 router.post("/api/gifts/new", function (req, res) {
     var body = "";
@@ -92,9 +107,10 @@ router.get("/api/gifts/:id/delete", function (req, res) {
     res.writeHead(200, {'Context-Type' : "application/json"});
     client.hincrby("gift:" + req.params.id, "quantity", "-1", function (err, reply) {
         if (reply <= 0) {
-            client.del("gift:" + req.params.id, function (err, reply) {
+            client.rename("gift:" + req.params.id, "purchased:" + req.params.id, function (err, reply) {
                 res.end();   
             });
+
         } else {
             res.end(JSON.stringify(reply));   
         }

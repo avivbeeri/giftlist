@@ -28,12 +28,11 @@
             <td>Image</td>
             <td>Gift Name</td>
             <td>Notes</td>
-            <td>Quantity Wanted</td>
             <td>Link</td>
-            <td>Taken</td>
         </tr>
     </table>
     <script>
+
         $(document).ready(function() {
             $.get("/api/gifts", function (data) {
                 //var gifts = JSON.parse(data);
@@ -41,27 +40,75 @@
                 gifts.forEach(function(gift) {
                     var id = gift.id;
                     gift.image = gift.image || "";
-                    console.log("Image: " + gift.image);
+                    var linkNode;
+                    if (gift.link !== "") {
+
+                        linkNode = $("<td>").append(
+                                       $("<a>").attr("href",gift.link)
+                                               .append("Link")
+                        );
+                    } else { 
+                        linkNode= $("<td>").append("N/A");
+                    }
                     $("#gifts").append(
                         $("<tr>").append(
-                            $("<td>").append(
-                                $("<img>").attr("src", gift.image)
+							$("<td>").append(
+								$("<img>").error(function () {
+                                    console.log("Image fail");
+                                    $(this).hide();
+								}).attr("src", gift.image)
                             ),
                             $("<td>").append(gift.name),
                             $("<td>").append(gift.description),
-                            $("<td>").append(gift.quantity),
+                            $("<td>").addClass("quantity").append(gift.quantity),
+                            linkNode,
                             $("<td>").append(
-                                $("<a>").attr("href",gift.link)
-                                        .append("Link")
-                            ),
-                            $("<td>").append(
-                                $("<a>").attr("href", "").click(function () {
+                                $("<a>").attr("href", "#").click(function () {
+                                    var link = $(this);
                                     $.get("/api/gifts/" + id + "/delete", function (data) {
-                                        console.log(JSON.stringify(data));
-                                        location.reload(true);
+                                        var cell = link.closest("td").siblings("td.quantity");
+                                        if (data > 0) {
+                                            cell.html(data);
+                                        } else {
+                                            var row = cell.closest("tr");
+                                            row.find("td").last().remove();
+                                            row.find(".quantity").last().remove();
+                                            row.appendTo("#bought");
+                                        }
                                     });
                                 }).append("take one")
                             )
+                        )
+                    );
+                });
+            });
+            $.get("/api/purchased", function (data) {
+                //var gifts = JSON.parse(data);
+                var gifts = data;
+                gifts.forEach(function(gift) {
+                    var id = gift.id;
+                    gift.image = gift.image || "";
+                    var linkNode;
+                    if (gift.link !== "") {
+
+                        linkNode = $("<td>").append(
+                                       $("<a>").attr("href",gift.link)
+                                               .append("Link")
+                        );
+                    } else { 
+                        linkNode= $("<td>").append("N/A");
+                    }
+                    $("#bought").append(
+                        $("<tr>").append(
+                            $("<td>").append(
+								$("<img>").error(function () {
+                                    console.log("Image fail");
+                                    $(this).hide();
+								}).attr("src", gift.image)
+                            ),
+                            $("<td>").append(gift.name),
+                            $("<td>").append(gift.description),
+                                linkNode
                         )
                     );
                 });
