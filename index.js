@@ -35,10 +35,19 @@ function serveStatic(req,res) {
       return;
   }
 
-  var type = mime.lookup('./' + name);
-  res.writeHead(200, { 'Content-Type' : type });
-  var file = fs.createReadStream("./" + name);
-  file.pipe(res);
+  
+  var path = "./" + name;
+  fs.exists(path, function(exists) {
+      if (exists) {
+          var type = mime.lookup(path);
+          res.writeHead(200, { 'Content-Type' : type });
+          var file = fs.createReadStream(path);
+          file.pipe(res);
+      } else {
+          res.writeHead(404);
+          res.end();
+      }
+  });
 };
 
 router.get("/api/gifts", function (req,res) {
