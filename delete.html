@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    
+<head>
+    <title>Ellie and Tim's Wedding Gift List</title>
+    <link rel="stylesheet" type="text/css" href="index.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" ></script>
+</head>
+
+<body>
+    <h1>Ellie and Tim's Wedding Gift List</h1>
+    <p>
+    Please click "delete" to delete the gift from the list entirely. <br />
+    <a href="index.html">Back to main list</a><br />
+    <a href="add.html">Add A Gift</a>
+    </p>
+    <table id="gifts">
+        <tr>
+            <td>Gift Name</td>
+            <td>Delete</td>
+        </tr>
+    </table>
+    <h2>Previously Bought Presents</h2>
+    <table id="bought">
+        <tr>
+            <td>Gift Name</td>
+            <td>Delete</td>
+        </tr>
+    </table>
+    <script>
+
+        $(document).ready(function() {
+            $.get("/api/gifts", function (data) {
+                //var gifts = JSON.parse(data);
+                var gifts = data;
+                gifts.forEach(function(gift) {
+                    var id = gift.id;
+                    $("#gifts").append(
+                        $("<tr>").append(
+                            $("<td>").append(gift.name),
+                            $("<td>").append(
+                                $("<a>").attr("href", "#").click(function () {
+                                    var link = $(this);
+                                    $.get("/api/gift/" + id + "/delete", function (data) {
+                                        var row = link.closest("tr");
+                                        row.remove();
+                                    });
+                                }).append("Delete")
+                            )
+                        )
+                    );
+                });
+            });
+            $.get("/api/purchased", function (data) {
+                //var gifts = JSON.parse(data);
+                var gifts = data;
+                gifts.forEach(function(gift) {
+                    var id = gift.id;
+                    $("#bought").append(
+                        $("<tr>").append(
+                            $("<td>").append(gift.name),
+                            $("<td>").append(
+                                $("<a>").attr("href", "#").click(function () {
+                                    var link = $(this);
+                                    $.get("/api/purchased/" + id + "/delete", function (data) {
+                                        var row = link.closest("tr");
+                                        row.remove();
+                                    });
+                                }).append("Delete")
+                            )
+                        )
+                    );
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

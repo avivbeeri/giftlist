@@ -25,7 +25,12 @@ router.get("/", serveStatic);
 function serveStatic(req,res) {
   var nameParam = req.params.name;
   var name;
-  if (nameParam && nameParam !== "favicon.ico") {
+  if (nameParam === "admin") {
+      name = "delete.html";
+  } else if (nameParam === "add") {
+      name = "add.html";
+  
+  } else if (nameParam && nameParam !== "favicon.ico") {
       name = require("url").parse(nameParam, true).pathname;
   } else if (nameParam !== "favicon.ico") {
       name = "index.html";
@@ -96,14 +101,25 @@ router.post("/api/gifts/new", function (req, res) {
                          "quantity", data.quantity,
                          "description", data.description,
                          "image", data.image,
-                         "link", data.link);
+                         "link", data.link,
+                         function () {
+                            res.writeHead(200, {"Content-Type":"application/json"});
+                            var result = {"id": uuid,
+                                        "name": data.name,
+                                        "quantity": data.quantity,
+                                        "description": data.description,
+                                        "image": data.image,
+                                        "link": data.link
+                            };
+                            
+                            res.end(JSON.stringify(result));
+                             
+                         });
         });
-        res.writeHead(201);
-        res.end();
     });
 });
 
-router.get("/api/gifts/:id/delete", function (req, res) {
+router.get("/api/gifts/:id/take", function (req, res) {
     res.writeHead(200, {'Context-Type' : "application/json"});
     client.hincrby("gift:" + req.params.id, "quantity", "-1", function (err, reply) {
         if (reply <= 0) {
@@ -114,6 +130,15 @@ router.get("/api/gifts/:id/delete", function (req, res) {
         } else {
             res.end(JSON.stringify(reply));   
         }
+    });
+});
+
+router.get("/api/:value/:id/delete", function (req, res) {
+    res.writeHead(200, {'Context-Type' : "application/json"});
+    var result = req.params.value + ":" + req.params.id;
+    console.log("test!" + result);
+    client.del(result, function (err, reply) {
+        res.end(JSON.stringify(reply));   
     });
 });
 

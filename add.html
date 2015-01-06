@@ -8,6 +8,10 @@
 
 <body>
     <h1>Add a Gift!</h1>
+    <p>
+    Add items here.
+    <a href="admin">Back to admin</a><br />
+    </p>
     <form id="giftForm" name="giftForm">
         Name: <input type="text" name="name" >
         <br />
@@ -21,6 +25,17 @@
                         min="1" step="1" value="1" >
         <input type="button" value="Submit" id="btnSubmit">
     </form>
+    <div>
+        <table id="output" style="display:none">
+            <tr>
+                <th>Image</th>
+                <th>Gift Name</th>
+                <th>Notes</th>
+                <th>Quantity</th>
+                <th>Link</th>
+            </tr>
+        </table>
+    </div>
     <script>
         $(document).ready(function() {
             $("#btnSubmit").click(function (e) {
@@ -29,8 +44,32 @@
                     url: "/api/gifts/new",
                     type: "POST",
                     data: postData,
-                    success: function () {
-                        window.location.replace("index.html");
+                    success: function (gift) {
+                        $("#giftForm")[0].reset();
+                        $("td").remove();
+                        gift.image = gift.image || "";
+                        var linkNode;
+                        if (gift.link !== "") {
+
+                            linkNode = $("<td>").append(
+                                           $("<a>").attr("href",gift.link)
+                                                   .append("Link")
+                            );
+                        } else { 
+                            linkNode= $("<td>").append("N/A");
+                        }
+                        $("#output").append(
+                            $("<tr>").append(
+                                $("<td>").append(
+                                    $("<img>").attr("src", gift.image)
+                                ),
+                                $("<td>").append(gift.name),
+                                $("<td>").append(gift.description),
+                                $("<td>").addClass("quantity").append(gift.quantity),
+                                linkNode
+                            )
+                            );
+                        $("#output").show();
                     },
                     error: function () {
 

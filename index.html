@@ -65,7 +65,7 @@
                             $("<td>").append(
                                 $("<a>").attr("href", "#").click(function () {
                                     var link = $(this);
-                                    $.get("/api/gifts/" + id + "/delete", function (data) {
+                                    $.get("/api/gifts/" + id + "/take", function (data) {
                                         var cell = link.closest("td").siblings("td.quantity");
                                         if (data > 0) {
                                             cell.html(data);
